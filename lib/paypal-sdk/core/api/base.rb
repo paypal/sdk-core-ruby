@@ -122,10 +122,10 @@ module PayPal::SDK::Core
       # * <tt>params</tt> -- (Optional) Parameters for the action
       # * <tt>initheader</tt> -- (Optional) HTTP header
       def request(action, params = {}, initheader = {})
+        start_time    = Time.now
         uri, content, header = format_request(action, params)
         initheader    = default_http_header.merge(header).merge(initheader)
         initheader.delete_if{|key, val| val.nil? }
-        start_time    = Time.now
         response      = @http.post(uri.path, content, initheader)
         format_response(action, response)
       rescue Net::HTTPBadGateway, Errno::ECONNRESET, Errno::ECONNABORTED, SocketError => error
