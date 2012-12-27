@@ -21,9 +21,7 @@ module PayPal::SDK::Core
 
         # Return credential properties for authentication.
         def properties
-          certificate_properties = {}
-          certificate_properties.delete_if{|k,v| RemoveProperties.include? k }
-          certificate_properties.merge( :authorization => oauth_authentication )
+          { authorization: oauth_authentication, app_id: credential.app_id }
         end
 
         private
