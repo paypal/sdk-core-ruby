@@ -24,6 +24,7 @@ module PayPal
 
       module Util
         autoload :OauthSignature, "paypal-sdk/core/util/oauth_signature"
+        autoload :OrderedHash,    "paypal-sdk/core/util/ordered_hash"
       end
 
       module Credential

@@ -9,6 +9,10 @@ module PayPal::SDK::Core
           def self.new(string = "")
             string.is_a?(::String) ? super : super(string.to_s)
           end
+
+          def to_yaml_type
+            "!tag:yaml.org,2002:str"
+          end
         end
 
         class Integer < ::Integer

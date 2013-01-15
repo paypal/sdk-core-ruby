@@ -24,7 +24,7 @@ module PayPal::SDK::Core
       XML_OUT_OPTIONS   = { 'RootName' => nil, 'AttrPrefix' => true, 'ContentKey' => ContentKey,
         'noindent' => true, 'SuppressEmpty' => true }
       XML_IN_OPTIONS    = { 'AttrPrefix' => true, 'ForceArray' => false, 'ContentKey' => ContentKey }
-      DEFAULT_PARAMS    = { "ebl:Version" => DEFAULT_API_VERSION }
+      DEFAULT_PARAMS    = Util::OrderedHash.new.merge!({ "ebl:Version" => DEFAULT_API_VERSION })
       SKIP_ATTRIBUTES   = [ "@xmlns", "@xsi:type" ]
       SOAP_HTTP_AUTH_HEADER  = {
         :authorization  => "X-PP-AUTHORIZATION"

@@ -34,8 +34,9 @@ module PayPal::SDK::Core
           def members
             @members ||=
               begin
+                superclass.load_members if defined? superclass.load_members
                 parent_members = superclass.instance_variable_get("@members")
-                parent_members ? parent_members.dup : {}
+                parent_members ? parent_members.dup : Util::OrderedHash.new
               end
           end
 
@@ -47,13 +48,14 @@ module PayPal::SDK::Core
           #   # alias_method  :error_message=, :errorMessage=
           def add_member(member_name, klass, options = {})
             member_name = member_name.to_sym
+            return if members[member_name]
             members[member_name] = options.merge( :type => klass )
             member_variable_name = "@#{member_name}"
             define_method "#{member_name}=" do |value|
               object = options[:array] ? convert_array(value, klass) : convert_object(value, klass)
               instance_variable_set(member_variable_name, object)
             end
-            default_value = ( options[:array] ? [] : ( klass < Base ? {} : nil ) )
+            default_value = ( options[:array] ? [] : ( klass < Base ? Util::OrderedHash.new : nil ) )
             define_method member_name do |&block|
               value = instance_variable_get(member_variable_name) || ( default_value && send("#{member_name}=", default_value) )
               value.instance_eval(&block) if block
@@ -132,7 +134,7 @@ module PayPal::SDK::Core
         # # @return
         # # [ <CurrencyType#object @amount="55" @code="USD" > ]
         def convert_array(array, klass)
-          default_value = ( klass < Base ? {} : nil )
+          default_value = ( klass < Base ? Util::OrderedHash.new : nil )
           data_type_array = ArrayWithBlock.new{|object| convert_object(object || default_value, klass) }
           data_type_array.merge!(array)
         end
@@ -159,7 +161,7 @@ module PayPal::SDK::Core
         # Create Hash based configured members
         def to_hash(options = {})
           options = HashOptions.merge(options)
-          hash    = {}
+          hash    = Util::OrderedHash.new
           member_names.each do |member|
             value = value_to_hash(instance_variable_get("@#{member}"), options)
             hash[hash_key(member, options)] = value unless skip_value?(value)

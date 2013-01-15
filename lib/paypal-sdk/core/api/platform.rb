@@ -24,9 +24,8 @@ module PayPal::SDK::Core
         "X-PAYPAL-REQUEST-DATA-FORMAT"  => "JSON",
         "X-PAYPAL-RESPONSE-DATA-FORMAT" => "JSON"
       }
-      DEFAULT_PARAMS = {
-        "requestEnvelope"       => { "errorLanguage" => "en_US" }
-      }
+      DEFAULT_PARAMS = Util::OrderedHash.new.merge!({ 
+        "requestEnvelope" => { "errorLanguage" => "en_US" } })
 
       # Get NVP service end point
       def service_endpoint
