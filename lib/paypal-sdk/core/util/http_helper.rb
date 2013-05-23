@@ -62,8 +62,8 @@ module PayPal::SDK::Core
           log_http_call(payload) do
             http = payload[:http] || create_http_connection(payload[:uri])
             http.start do |session|
-              if payload[:method] == :get
-                session.get(payload[:uri].request_uri, payload[:header])
+              if [ :get, :delete, :head ].include? payload[:method]
+                session.send(payload[:method], payload[:uri].request_uri, payload[:header])
               else
                 session.send(payload[:method], payload[:uri].request_uri, payload[:body], payload[:header])
               end

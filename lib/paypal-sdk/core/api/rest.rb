@@ -133,7 +133,7 @@ module PayPal::SDK::Core
       def format_response(payload)
         payload[:data] =
           if payload[:response].code >= "200" and payload[:response].code <= "299"
-            MultiJson.load(payload[:response].body)
+            payload[:response].body ? MultiJson.load(payload[:response].body) : {}
           elsif payload[:response].content_type == "application/json"
             { "error" => MultiJson.load(payload[:response].body) }
           else

@@ -43,22 +43,24 @@ describe PayPal::SDK::OpenIDConnect do
     url.should match "id_token=testing"
   end
 
-  it "Create token" do
-    lambda{
-      tokeninfo = OpenIDConnect::Tokeninfo.create("invalid-autorize-code")
-    }.should raise_error PayPal::SDK::Core::Exceptions::BadRequest
-  end
+  describe "Validation" do
+    it "Create token" do
+      lambda{
+        tokeninfo = OpenIDConnect::Tokeninfo.create("invalid-autorize-code")
+      }.should raise_error PayPal::SDK::Core::Exceptions::BadRequest
+    end
 
-  it "Refresh token" do
-    lambda{
-      tokeninfo = OpenIDConnect::Tokeninfo.refresh("invalid-refresh-token")
-    }.should raise_error PayPal::SDK::Core::Exceptions::BadRequest
-  end
+    it "Refresh token" do
+      lambda{
+        tokeninfo = OpenIDConnect::Tokeninfo.refresh("invalid-refresh-token")
+      }.should raise_error PayPal::SDK::Core::Exceptions::BadRequest
+    end
 
-  it "Get userinfo" do
-    lambda{
-      userinfo = OpenIDConnect::Userinfo.get("invalid-access-token")
-    }.should raise_error PayPal::SDK::Core::Exceptions::UnauthorizedAccess
+    it "Get userinfo" do
+      lambda{
+        userinfo = OpenIDConnect::Userinfo.get("invalid-access-token")
+      }.should raise_error PayPal::SDK::Core::Exceptions::UnauthorizedAccess
+    end
   end
 
   describe "Tokeninfo" do
@@ -68,16 +70,25 @@ describe PayPal::SDK::OpenIDConnect do
         :id_token => "test_id_token" )
     end
 
+    it "create" do
+      OpenIDConnect::Tokeninfo.api.stub( :post => { :access_token => "access_token" } )
+      tokeninfo = OpenIDConnect::Tokeninfo.create("authorize_code")
+      tokeninfo.should be_a OpenIDConnect::Tokeninfo
+      tokeninfo.access_token.should eql "access_token"
+    end
+
     it "refresh" do
-      lambda{
-        tokeninfo = @tokeninfo.refresh
-      }.should raise_error PayPal::SDK::Core::Exceptions::BadRequest
+      @tokeninfo.api.stub( :post => { :access_token => "new_access_token" } )
+      @tokeninfo.access_token.should eql "test_access_token"
+      @tokeninfo.refresh
+      @tokeninfo.access_token.should eql "new_access_token"
     end
 
     it "userinfo" do
-      lambda{
-        userinfo = @tokeninfo.userinfo
-      }.should raise_error PayPal::SDK::Core::Exceptions::UnauthorizedAccess
+      @tokeninfo.api.stub( :post => { :name => "Testing" } )
+      userinfo = @tokeninfo.userinfo
+      userinfo.should be_a OpenIDConnect::Userinfo
+      userinfo.name.should eql "Testing"
     end
 
     it "Generate logout_url" do
@@ -85,6 +96,20 @@ describe PayPal::SDK::OpenIDConnect do
       url.should match "id_token=test_id_token"
       url.should match "logout=true"
       url.should match Regexp.escape("redirect_uri=#{CGI.escape("http://google.com")}")
+    end
+  end
+
+  describe "Userinfo" do
+    it "get" do
+      OpenIDConnect::Userinfo.api.stub( :post => { :name => "Testing" } )
+
+      userinfo = OpenIDConnect::Userinfo.get("access_token")
+      userinfo.should be_a OpenIDConnect::Userinfo
+      userinfo.name.should eql "Testing"
+
+      userinfo = OpenIDConnect::Userinfo.get( :access_token => "access_token" )
+      userinfo.should be_a OpenIDConnect::Userinfo
+      userinfo.name.should eql "Testing"
     end
   end
 
