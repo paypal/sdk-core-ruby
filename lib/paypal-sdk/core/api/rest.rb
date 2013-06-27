@@ -51,7 +51,9 @@ module PayPal::SDK::Core
           begin
             @token_request_at = Time.now
             basic_auth = ["#{config.client_id}:#{config.client_secret}"].pack('m').delete("\r\n")
-            token_headers = default_http_header.merge( "Authorization" => "Basic #{basic_auth}" )
+            token_headers = default_http_header.merge({
+              "Content-Type"  => "application/x-www-form-urlencoded",
+              "Authorization" => "Basic #{basic_auth}" })
             response = http_call( :method => :post, :uri => token_uri, :body => TOKEN_REQUEST_PARAMS, :header => token_headers )
             MultiJson.load(response.body, :symbolize_keys => true)
           end
