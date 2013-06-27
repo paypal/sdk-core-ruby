@@ -41,6 +41,7 @@ module PayPal::SDK::Core
 
         class DateTime < ::DateTime
           def self.new(date_time)
+            date_time = "0001-01-01T00:00:00" if date_time.to_s == "0"
             date_time.is_a?(::DateTime) ? date_time : parse(date_time.to_s)
           end
         end

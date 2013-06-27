@@ -180,5 +180,10 @@ describe PayPal::SDK::Core::API::DataTypes::Base do
     test_simple_type.created_at.should be_a DateTime
   end
 
+  it "should allow date with value 0" do
+    test_simple_type = TestSimpleType.new( :created_at => "0" )
+    test_simple_type.created_at.should be_a DateTime
+  end
+
 end
 
