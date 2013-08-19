@@ -92,23 +92,28 @@ module PayPal::SDK::Core
       # * <tt>params</tt> -- (Optional) Parameters for the action
       # * <tt>initheader</tt> -- (Optional) HTTP header
       def post(action, params = {}, header = {})
+        action, params, header = "", action, params if action.is_a? Hash
         api_call(:method => :post, :action => action, :params => params, :header => header)
       end
       alias_method :request, :post
 
       def get(action, params = {}, header = {})
+        action, params, header = "", action, params if action.is_a? Hash
         api_call(:method => :get, :action => action, :query => params, :params => nil, :header => header)
       end
 
       def patch(action, params = {}, header = {})
+        action, params, header = "", action, params if action.is_a? Hash
         api_call(:method => :patch, :action => action, :params => params, :header => header)
       end
 
       def put(action, params = {}, header = {})
+        action, params, header = "", action, params if action.is_a? Hash
         api_call(:method => :put, :action => action, :params => params, :header => header)
       end
 
       def delete(action, params = {}, header = {})
+        action, params, header = "", action, params if action.is_a? Hash
         api_call(:method => :delete, :action => action, :params => params, :header => header)
       end
 

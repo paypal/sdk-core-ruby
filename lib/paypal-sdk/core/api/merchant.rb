@@ -98,7 +98,7 @@ module PayPal::SDK::Core
 
       # Log additional information
       def log_http_call(payload)
-        logger.info "Action: #{payload[:action]}" if payload[:action]
+        logger.info "Action: #{payload[:action]}" if payload[:action] and payload[:action] != ""
         super
       end
 
@@ -109,7 +109,11 @@ module PayPal::SDK::Core
       # * <tt>action</tt> -- Request Action name
       # * <tt>params</tt> -- Parameters for the action.
       def request_body(action, params = {})
-        { "ns:#{action}Req" => { "ns:#{action}Request" => DEFAULT_PARAMS.merge(params) } }
+        if action and action != ""
+          { "ns:#{action}Req" => { "ns:#{action}Request" => DEFAULT_PARAMS.merge(params) } }
+        else
+          params
+        end
       end
 
       # Remove specified attributes from the given Hash
