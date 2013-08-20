@@ -11,11 +11,25 @@ describe PayPal::SDK::OpenIDConnect do
     OpenIDConnect::API.user_agent.should match "PayPalSDK/openid-connect-ruby"
   end
 
-  it "generate autorize_url" do
-    url = OpenIDConnect::Tokeninfo.authorize_url
-    url.should match "client_id=client_id"
-    url.should match Regexp.escape("redirect_uri=#{CGI.escape("http://google.com")}")
-    url.should match "scope=openid"
+  describe "generate_authorize_url" do
+
+    it "generate autorize_url" do
+      url = OpenIDConnect::Tokeninfo.authorize_url
+      url.should match "client_id=client_id"
+      url.should match Regexp.escape("redirect_uri=#{CGI.escape("http://google.com")}")
+      url.should match "scope=openid"
+    end
+
+    describe "sandbox" do
+      before do
+        PayPal::SDK.configure(:mode => "sandbox")
+      end
+
+      it "generates a sandbox authorize url" do
+        url = OpenIDConnect::Tokeninfo.authorize_url
+        url.should match "sandbox.paypal.com"
+      end
+    end
   end
 
   it "Override authorize_url params" do
@@ -91,11 +105,24 @@ describe PayPal::SDK::OpenIDConnect do
       userinfo.name.should eql "Testing"
     end
 
-    it "Generate logout_url" do
-      url = @tokeninfo.logout_url
-      url.should match "id_token=test_id_token"
-      url.should match "logout=true"
-      url.should match Regexp.escape("redirect_uri=#{CGI.escape("http://google.com")}")
+    describe "logout_url" do
+      it "Generate logout_url" do
+        url = @tokeninfo.logout_url
+        url.should match "id_token=test_id_token"
+        url.should match "logout=true"
+        url.should match Regexp.escape("redirect_uri=#{CGI.escape("http://google.com")}")
+      end
+
+      describe "sandbox" do
+        before do
+          PayPal::SDK.configure(:mode => "sandbox")
+        end
+
+        it "generates a sandbox logout url" do
+          url = @tokeninfo.logout_url
+          url.should match "sandbox.paypal.com"
+        end
+      end
     end
   end
 

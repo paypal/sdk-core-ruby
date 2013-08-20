@@ -20,12 +20,12 @@ module PayPal::SDK
         end
         alias_method :config=, :set_config
 
-        AUTHORIZATION_URL  = "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize"
-        ENDSESSION_URL     = "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/endsession"
+        AUTHORIZATION_URL  = "paypal.com/webapps/auth/protocol/openidconnect/v1/authorize"
+        ENDSESSION_URL     = "paypal.com/webapps/auth/protocol/openidconnect/v1/endsession"
         DEFAULT_SCOPE      = "openid"
 
         def authorize_url(params = {})
-          uri = URI(AUTHORIZATION_URL)
+          uri = URI(url_for_mode(AUTHORIZATION_URL))
           uri.query = api.encode_www_form({
             :response_type => "code",
             :scope => DEFAULT_SCOPE,
@@ -36,12 +36,18 @@ module PayPal::SDK
         end
 
         def logout_url(params = {})
-          uri = URI(ENDSESSION_URL)
+          uri = URI(url_for_mode(ENDSESSION_URL))
           uri.query = api.encode_www_form({
             :logout   => "true",
             :redirect_uri => api.config.openid_redirect_uri
           }.merge(params))
           uri.to_s
+        end
+
+        private
+
+        def url_for_mode(url)
+          "https://www.#{"sandbox." if api.api_mode == :sandbox}#{url}"
         end
       end
 
