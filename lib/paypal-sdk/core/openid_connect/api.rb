@@ -5,14 +5,16 @@ module PayPal::SDK
     module OpenIDConnect
       class API < Core::API::Base
 
-        DEFAULT_OPENID_ENDPOINT ="https://api.paypal.com"
+        DEFAULT_OPENID_ENDPOINT = {
+          :sandbox => "https://api.sandbox.paypal.com",
+          :live => "https://api.paypal.com" }
 
         def initialize(environment = nil, options = {})
           super("", environment, options)
         end
 
         def service_endpoint
-          self.config.openid_endpoint || DEFAULT_OPENID_ENDPOINT
+          self.config.openid_endpoint || DEFAULT_OPENID_ENDPOINT[self.api_mode] || DEFAULT_OPENID_ENDPOINT[:sandbox]
         end
 
         def format_request(payload)
