@@ -8,4 +8,5 @@ gem 'rake', :require => false
 group :test do
   gem 'rspec'
   gem 'simplecov', :require => false
+  gem 'coveralls', :require => false
 end

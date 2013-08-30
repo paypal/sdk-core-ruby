@@ -8,8 +8,11 @@ if ENV['COVERAGE']
 end
 
 Bundler.require :default, :test
-require 'logger'
 
+require 'coveralls'
+Coveralls.wear!
+
+require 'logger'
 PayPal::SDK.load('spec/config/paypal.yml', 'test')
 PayPal::SDK.logger = Logger.new(STDERR)
 

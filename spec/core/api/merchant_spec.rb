@@ -69,6 +69,15 @@ describe PayPal::SDK::Core::API::Merchant do
       response  = client.request("TransactionSearch", TransactionSearchParams)
       response["Ack"].should eql "Success"
     end
+
+    it "with raw request" do
+      client   = Merchant.new
+      response = client.request({
+        "ns:TransactionSearchReq" => {
+          "ns:TransactionSearchRequest" =>  TransactionSearchParams.merge("ebl:Version" => "94")
+      } } )
+      response["Ack"].should eql "Success"
+    end
   end
 
   describe "Format request" do
