@@ -110,7 +110,8 @@ module PayPal::SDK::Core
       # * <tt>params</tt> -- Parameters for the action.
       def request_body(action, params = {})
         if action and action != ""
-          { "ns:#{action}Req" => { "ns:#{action}Request" => DEFAULT_PARAMS.merge(params) } }
+          request_action = (action == "BillAgreementUpdate" ? "BAUpdate" : action)
+          { "ns:#{action}Req" => { "ns:#{request_action}Request" => DEFAULT_PARAMS.merge(params) } }
         else
           params
         end
