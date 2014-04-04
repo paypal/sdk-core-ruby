@@ -56,7 +56,7 @@ module PayPal::SDK::Core
       # (but beware, URI.encode percent encodes spaces, and does nothing with '*').
       # Finally, CGI.encode does not encode '.-', which we need to do here.
       def paypal_encode str
-        CGI.escape(str).gsub('.', '%2E').gsub('-', '%2D')
+        CGI.escape(str.to_s).gsub('.', '%2E').gsub('-', '%2D')
       end
     end
   end

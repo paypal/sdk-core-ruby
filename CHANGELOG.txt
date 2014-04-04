@@ -1,3 +1,7 @@
+Version 0.2.8 - Apr 04, 2014
+  - Validate content-type in REST service. #24
+  - Fix for undefined method 'encoding' for Fixnum. #22
+
 Version 0.2.7 - Dec 30, 2013
   - Added account_creation_date attribute to Userinfo
 
